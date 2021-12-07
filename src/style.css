@@ -25,18 +25,9 @@ body {
   cursor: pointer;
   transition: border 0.2s, font-weight 0.2s;
 }
-[data-panel-title]::after {
-  display: inline;
-  content: '+';
-}
-
 [data-panel-title].expanded {
   border-bottom: 1px solid #646f74;
 }
-[data-panel-title].expanded::after {
-  content: '-';
-}
-
 [data-panel-content] {
   background: #edf2f8;
   clip: rect(1px, 1px, 1px, 1px);

@@ -20,21 +20,49 @@ function AccordionItem({children}) {
 }
 
 function AccordionButton({children}) {
-  const {index, state, setState} = useContext(AccordionContext);
+  const {index, state, setState, task} = useContext(AccordionContext);
   const isActive = index === state.activeIndex;
+  console.log(task);
+
+  function toggleCompleted(e) {
+    const toggledTasks = state.tasks.map(task =>
+      task.id === e.target.id
+        ? {...task, isCompleted: !task.isCompleted}
+        : task,
+    );
+    setState({
+      ...state,
+      tasks: toggledTasks,
+    });
+  }
 
   return (
-    <div
-      data-panel-title
-      className={isActive ? 'expanded' : ''}
-      onClick={() => {
-        setState({
-          ...state,
-          activeIndex: index,
-        });
-      }}
-    >
-      {children}
+    <div data-panel-title className={isActive ? 'expanded' : ''}>
+      <input
+        type="checkbox"
+        id={task.id}
+        onChange={e => toggleCompleted(e)}
+        checked={task.isCompleted}
+      />
+      <span
+        style={
+          task.isCompleted
+            ? {textDecoration: 'line-through'}
+            : {textDecoration: 'none'}
+        }
+      >
+        {children}
+      </span>
+      <button
+        onClick={() => {
+          setState({
+            ...state,
+            activeIndex: !isActive ? index : !state.activeIndex,
+          });
+        }}
+      >
+        {isActive ? '-' : '+'}
+      </button>
     </div>
   );
 }
@@ -58,7 +86,7 @@ function App() {
         {state.tasks.map((task, index) => (
           <AccordionContext.Provider
             key={index}
-            value={{index, state, setState}}
+            value={{index, state, setState, task}}
           >
             <AccordionItem>
               <AccordionButton>{task.text}</AccordionButton>

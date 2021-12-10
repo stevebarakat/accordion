@@ -1,16 +1,26 @@
-import React, {useState, createContext, useContext} from 'react';
+import React, {useState, useEffect, createContext, useContext} from 'react';
 import ReactDOM from 'react-dom';
+import {db} from './firebase-config';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from 'firebase/firestore';
 import './style.css';
 import initalState from './initialState';
 
 const AccordionContext = createContext();
+const tasksCollectionRef = collection(db, 'tasks');
 
 function Accordion({children}) {
   return (
     <div data-accordion>
-      {children.map((child, index) => {
+      {/* {children.map((child, index) => {
         return <div key={`section-${index}`}>{child}</div>;
-      })}
+      })} */}
     </div>
   );
 }
@@ -79,11 +89,29 @@ function AccordionPanel({children}) {
 }
 function App() {
   const [state, setState] = useState(initalState);
+  const [isLoading, setIsLoading] = useState(true);
 
-  return (
+  useEffect(() => {
+    const getTasks = async () => {
+      const data = await getDocs(tasksCollectionRef);
+      setState(data.docs.map(doc => ({...doc.data(), id: doc.id})));
+    };
+    getTasks();
+    setIsLoading(false);
+  }, []);
+
+  return isLoading ? (
+    'loading...'
+  ) : (
     <div className="App">
       <Accordion>
-        {state.tasks.map((task, index) => (
+        {(async function () {
+          const name = await state[0].name;
+          console.log(name);
+          return name;
+        })()}
+
+        {state.tasks?.map((task, index) => (
           <AccordionContext.Provider
             key={index}
             value={{index, state, setState, task}}

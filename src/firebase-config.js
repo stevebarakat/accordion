@@ -1,13 +1,13 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "@firebase/firestore";
+import {initializeApp} from 'firebase/app';
+import {getFirestore} from '@firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBEdwh-ujEdB7BcfNsBICH5t4sdzXxZwW0",
-  authDomain: "fb-tut-d39f5.firebaseapp.com",
-  projectId: "fb-tut-d39f5",
-  storageBucket: "fb-tut-d39f5.appspot.com",
-  messagingSenderId: "629835046538",
-  appId: "1:629835046538:web:5c93336d531d4b8bb29773",
+  apiKey: 'AIzaSyAqBktTBl4w2EFtuyg5lnWXEA5IUbdpJSM',
+  authDomain: 'new-tasks.firebaseapp.com',
+  projectId: 'new-tasks',
+  storageBucket: 'new-tasks.appspot.com',
+  messagingSenderId: '1012795103379',
+  appId: '1:1012795103379:web:bf7c31654d34b4f0a41566',
 };
 
 // Initialize Firebase

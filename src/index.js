@@ -1,4 +1,10 @@
-import React, {useState, useEffect, createContext, useContext} from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  createContext,
+  useContext,
+} from 'react';
 import ReactDOM from 'react-dom';
 import {db} from './firebase-config';
 import {
@@ -16,11 +22,13 @@ const AccordionContext = createContext();
 const tasksCollectionRef = collection(db, 'tasks');
 
 function Accordion({children}) {
+  console.log('children: ', children);
   return (
     <div data-accordion>
-      {/* {children.map((child, index) => {
+      {children.map((child, index) => {
+        console.log(child);
         return <div key={`section-${index}`}>{child}</div>;
-      })} */}
+      })}
     </div>
   );
 }
@@ -32,27 +40,19 @@ function AccordionItem({children}) {
 function AccordionButton({children}) {
   const {index, state, setState, task} = useContext(AccordionContext);
   const isActive = index === state.activeIndex;
-  console.log(task);
 
-  function toggleCompleted(e) {
-    const toggledTasks = state.tasks.map(task =>
-      task.id === e.target.id
-        ? {...task, isCompleted: !task.isCompleted}
-        : task,
-    );
-    setState({
-      ...state,
-      tasks: toggledTasks,
-    });
-  }
+  const updateTask = async (id, isCompleted) => {
+    const taskDoc = doc(db, 'tasks', id);
+    const toggleCompleted = {isCompleted: !isCompleted};
+    await updateDoc(taskDoc, toggleCompleted);
+  };
 
   return (
     <div data-panel-title className={isActive ? 'expanded' : ''}>
       <input
         type="checkbox"
-        id={task.id}
-        onChange={e => toggleCompleted(e)}
         checked={task.isCompleted}
+        onChange={() => updateTask(task.id, task.isCompleted)}
       />
       <span
         style={
@@ -91,27 +91,28 @@ function App() {
   const [state, setState] = useState(initalState);
   const [isLoading, setIsLoading] = useState(true);
 
+  const memoizedCallback = useCallback(async () => {
+    const data = await getDocs(tasksCollectionRef);
+    const tasks = await data.docs.map(doc => ({...doc.data(), id: doc.id}));
+    setState({...state, tasks});
+  }, [state]);
+
   useEffect(() => {
     const getTasks = async () => {
-      const data = await getDocs(tasksCollectionRef);
-      setState(data.docs.map(doc => ({...doc.data(), id: doc.id})));
+      memoizedCallback();
     };
     getTasks();
     setIsLoading(false);
-  }, []);
+  }, [memoizedCallback]);
+
+  console.log(state);
 
   return isLoading ? (
     'loading...'
   ) : (
     <div className="App">
       <Accordion>
-        {(async function () {
-          const name = await state[0].name;
-          console.log(name);
-          return name;
-        })()}
-
-        {state.tasks?.map((task, index) => (
+        {state.tasks.map((task, index) => (
           <AccordionContext.Provider
             key={index}
             value={{index, state, setState, task}}

@@ -103,7 +103,7 @@ function App() {
     };
     getTasks();
     setIsLoading(false);
-  }, [memoizedCallback]);
+  }, []);
 
   console.log(state);
 

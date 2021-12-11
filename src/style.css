@@ -14,14 +14,30 @@ body {
 }
 .task-form {
   display: flex;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 15px 15px 25px;
+  background: white;
+  border-top: 1px solid #edf2f8;
+  border-bottom: 1px solid white;
+  cursor: pointer;
+  transition: border 0.2s, font-weight 0.2s;
 }
 .task-input {
   padding: 0.5rem;
   width: 100%;
+  border: 1px solid #9a9a9a;
+  background: #edf2f8;
+  border-radius: 3px;
 }
 .task-form-btn {
   width: 50px;
   aspect-ratio: 1/1;
+}
+
+button {
+  border: 1px solid #9a9a9a;
+  border-radius: 3px;
 }
 
 [data-accordion] {

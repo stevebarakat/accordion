@@ -18,10 +18,36 @@ import {
 import './style.css';
 import initalState from './initialState';
 
-const AccordionContext = createContext();
+const TasksContext = createContext();
 const tasksCollectionRef = collection(db, 'tasks');
 
-function Accordion({children}) {
+function TaskForm({children}) {
+  const [taskItemText, setTaskItemText] = useState('');
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    await addDoc(tasksCollectionRef, {
+      text: taskItemText,
+      isCompleted: false,
+    });
+  };
+
+  return (
+    <form className="task-form" onSubmit={handleSubmit}>
+      <input
+        name="task"
+        value={taskItemText}
+        className="task-input"
+        onChange={e => setTaskItemText(e.target.value)}
+      />
+      <button type="submit" className="task-form-btn">
+        +
+      </button>
+    </form>
+  );
+}
+
+function TaskList({children}) {
   console.log('children: ', children);
   return (
     <div data-accordion>
@@ -33,12 +59,12 @@ function Accordion({children}) {
   );
 }
 
-function AccordionItem({children}) {
+function TaskWrap({children}) {
   return <div data-section>{children}</div>;
 }
 
-function AccordionButton({children}) {
-  const {index, state, setState, task} = useContext(AccordionContext);
+function TaskItem({children}) {
+  const {index, state, setState, task} = useContext(TasksContext);
   const isActive = index === state.activeIndex;
 
   const updateTask = async (id, isCompleted) => {
@@ -77,8 +103,8 @@ function AccordionButton({children}) {
   );
 }
 
-function AccordionPanel({children}) {
-  const {index, state} = useContext(AccordionContext);
+function ControlPanel({children}) {
+  const {index, state} = useContext(TasksContext);
   const isActive = index === state.activeIndex;
 
   return (
@@ -111,19 +137,20 @@ function App() {
     'loading...'
   ) : (
     <div className="App">
-      <Accordion>
+      <TaskList>
+        <TaskForm />
         {state.tasks.map((task, index) => (
-          <AccordionContext.Provider
+          <TasksContext.Provider
             key={index}
             value={{index, state, setState, task}}
           >
-            <AccordionItem>
-              <AccordionButton>{task.text}</AccordionButton>
-              <AccordionPanel>Control Panel</AccordionPanel>
-            </AccordionItem>
-          </AccordionContext.Provider>
+            <TaskWrap>
+              <TaskItem>{task.text}</TaskItem>
+              <ControlPanel>Control Panel</ControlPanel>
+            </TaskWrap>
+          </TasksContext.Provider>
         ))}
-      </Accordion>
+      </TaskList>
     </div>
   );
 }

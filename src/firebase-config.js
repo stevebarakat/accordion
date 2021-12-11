@@ -2,12 +2,12 @@ import {initializeApp} from 'firebase/app';
 import {getFirestore} from '@firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyAqBktTBl4w2EFtuyg5lnWXEA5IUbdpJSM',
-  authDomain: 'new-tasks.firebaseapp.com',
-  projectId: 'new-tasks',
-  storageBucket: 'new-tasks.appspot.com',
-  messagingSenderId: '1012795103379',
-  appId: '1:1012795103379:web:bf7c31654d34b4f0a41566',
+  apiKey: 'AIzaSyCMAL0dbrqEizmFvDMhgRiPdT14o6eyMSU',
+  authDomain: 'new-tasks-1ee42.firebaseapp.com',
+  projectId: 'new-tasks-1ee42',
+  storageBucket: 'new-tasks-1ee42.appspot.com',
+  messagingSenderId: '1039237536110',
+  appId: '1:1039237536110:web:0eca0dc46604620de1897f',
 };
 
 // Initialize Firebase

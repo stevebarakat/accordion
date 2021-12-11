@@ -1,5 +1,5 @@
 const initialState = {
-  activeIndex: 0,
+  activeIndex: null,
   tasks: [
     {
       text: 'Task One',

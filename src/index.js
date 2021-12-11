@@ -73,6 +73,11 @@ function TaskItem({children}) {
     await updateDoc(taskDoc, toggleCompleted);
   };
 
+  const deleteTask = async id => {
+    const taskDoc = doc(db, 'tasks', id);
+    await deleteDoc(taskDoc);
+  };
+
   return (
     <div data-panel-title className={isActive ? 'expanded' : ''}>
       <input
@@ -90,6 +95,14 @@ function TaskItem({children}) {
         {children}
       </span>
       <button
+        onClick={() => {
+          deleteTask(task.id);
+        }}
+      >
+        x
+      </button>
+      <button
+        style={{display: 'none'}}
         onClick={() => {
           setState({
             ...state,

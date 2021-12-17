@@ -16,7 +16,7 @@ import {
   doc,
 } from 'firebase/firestore';
 import './style.css';
-import initalState from './initialState';
+import initialTasks from './initialTasks';
 
 const TasksContext = createContext();
 const tasksCollectionRef = collection(db, 'tasks');
@@ -64,8 +64,8 @@ function TaskWrap({children}) {
 }
 
 function TaskItem({children}) {
-  const {index, state, setState, task} = useContext(TasksContext);
-  const isActive = index === state.activeIndex;
+  const {index, activeIndex, setActiveIndex, task} = useContext(TasksContext);
+  const isActive = index === activeIndex;
 
   const updateTask = async (id, isCompleted) => {
     const taskDoc = doc(db, 'tasks', id);
@@ -104,10 +104,7 @@ function TaskItem({children}) {
       <button
         style={{display: 'none'}}
         onClick={() => {
-          setState({
-            ...state,
-            activeIndex: !isActive ? index : !state.activeIndex,
-          });
+          setActiveIndex(!isActive ? index : !activeIndex);
         }}
       >
         {isActive ? '-' : '+'}
@@ -117,8 +114,8 @@ function TaskItem({children}) {
 }
 
 function ControlPanel({children}) {
-  const {index, state} = useContext(TasksContext);
-  const isActive = index === state.activeIndex;
+  const {index, activeIndex} = useContext(TasksContext);
+  const isActive = index === activeIndex;
 
   return (
     <div data-panel-content className={isActive ? 'expanded' : ''}>
@@ -127,24 +124,19 @@ function ControlPanel({children}) {
   );
 }
 function App() {
-  const [state, setState] = useState(initalState);
+  const [tasks, setTasks] = useState(initialTasks);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
-  const memoizedCallback = useCallback(async () => {
-    const data = await getDocs(tasksCollectionRef);
-    const tasks = await data.docs.map(doc => ({...doc.data(), id: doc.id}));
-    setState({...state, tasks});
-  }, [state]);
 
   useEffect(() => {
     const getTasks = async () => {
-      memoizedCallback();
+      const data = await getDocs(tasksCollectionRef);
+      const tasks = await data.docs.map(doc => ({...doc.data(), id: doc.id}));
+      setTasks(tasks);
     };
     getTasks();
     setIsLoading(false);
-  }, []);
-
-  console.log(state);
+  }, [tasks]);
 
   return isLoading ? (
     'loading...'
@@ -152,10 +144,10 @@ function App() {
     <div className="App">
       <TaskList>
         <TaskForm />
-        {state.tasks.map((task, index) => (
+        {tasks.map((task, index) => (
           <TasksContext.Provider
             key={index}
-            value={{index, state, setState, task}}
+            value={{index, tasks, setTasks, task, activeIndex, setActiveIndex}}
           >
             <TaskWrap>
               <TaskItem>{task.text}</TaskItem>

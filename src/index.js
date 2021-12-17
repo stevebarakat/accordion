@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  createContext,
-  useContext,
-} from 'react';
+import React, {useState, useEffect, createContext, useContext} from 'react';
 import ReactDOM from 'react-dom';
 import {db} from './firebase-config';
 import {
